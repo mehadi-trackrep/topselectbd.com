@@ -64,8 +64,7 @@ app.use((req, res, next) => {
   // host: process.env.NODE_ENV === "development" ? "127.0.0.1" : "0.0.0.0";
   server.listen({
     port,
-    host:  "127.0.0.1", // "0.0.0.0",
-    reusePort: true,
+    host: "0.0.0.0",
   }, () => {
     log(`serving on port ${port}`);
   });

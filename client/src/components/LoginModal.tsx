@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useAuth } from "@/lib/auth";
+import { useAuthActions, useIsLoginOpen } from "@/hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -15,7 +15,8 @@ export default function LoginModal() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   
-  const { isLoginOpen, closeLogin, openRegister, setUser } = useAuth();
+  const { closeLogin, openRegister, setUser } = useAuthActions();
+  const isLoginOpen = useIsLoginOpen();
   const { toast } = useToast();
 
   const loginMutation = useMutation({

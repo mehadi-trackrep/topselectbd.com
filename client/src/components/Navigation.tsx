@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/hooks/useCart";
-import { useAuth } from "@/lib/auth";
+import { useAuthActions, useAuthUser } from "@/hooks/useAuth";
 
 export default function Navigation() {
   const [searchQuery, setSearchQuery] = useState("");
   const [location] = useLocation();
   const { getTotalItems, openCart } = useCart();
-  const { user, openLogin } = useAuth();
+  const { user } = useAuthUser();
+  const { openLogin } = useAuthActions();
 
   const menuItems = [
     { name: "হোম", href: "/" },

@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/lib/auth";
+import { useAuthActions, useIsRegisterOpen } from "@/hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -14,7 +14,8 @@ export default function RegisterModal() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   
-  const { isRegisterOpen, closeRegister, openLogin, setUser } = useAuth();
+  const { closeRegister, openLogin, setUser } = useAuthActions();
+  const isRegisterOpen = useIsRegisterOpen();
   const { toast } = useToast();
 
   const registerMutation = useMutation({
