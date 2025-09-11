@@ -1,20 +1,30 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertOrderSchema, insertOrderItemSchema } from "@shared/schema";
+import { insertUserSchema, loginSchema, checkoutSchema, insertCartItemSchema } from "@shared/schema";
+import { randomUUID } from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Get all products
-  app.get("/api/products", async (_req, res) => {
+  // Products routes
+  app.get("/api/products", async (req, res) => {
     try {
-      const products = await storage.getProducts();
+      const { search, category } = req.query;
+      
+      let products;
+      if (search) {
+        products = await storage.searchProducts(search as string);
+      } else if (category) {
+        products = await storage.getProductsByCategory(category as string);
+      } else {
+        products = await storage.getProducts();
+      }
+      
       res.json(products);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch products" });
     }
   });
 
-  // Get single product
   app.get("/api/products/:id", async (req, res) => {
     try {
       const product = await storage.getProduct(req.params.id);
@@ -27,93 +37,179 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Register user
+  // Auth routes
   app.post("/api/auth/register", async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
       
       // Check if user already exists
-      const existingUser = await storage.getUserByEmail(userData.email);
+      const existingUser = await storage.getUserByUsername(userData.username) || 
+                          await storage.getUserByEmail(userData.email);
+      
       if (existingUser) {
-        return res.status(400).json({ message: "User already exists with this email" });
+        return res.status(400).json({ message: "User already exists" });
       }
-
+      
       const user = await storage.createUser(userData);
-      res.status(201).json({ 
-        id: user.id, 
-        username: user.username, 
-        email: user.email,
-        name: user.name 
-      });
+      const { password, ...userWithoutPassword } = user;
+      
+      res.json(userWithoutPassword);
     } catch (error) {
       res.status(400).json({ message: "Invalid user data" });
     }
   });
 
-  // Login user
   app.post("/api/auth/login", async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const loginData = loginSchema.parse(req.body);
       
-      const user = await storage.getUserByEmail(email);
-      if (!user || user.password !== password) {
+      const user = await storage.getUserByUsername(loginData.username) || 
+                   await storage.getUserByEmail(loginData.username);
+      
+      if (!user || user.password !== loginData.password) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
-
-      res.json({ 
-        id: user.id, 
-        username: user.username, 
-        email: user.email,
-        name: user.name 
-      });
+      
+      const { password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
     } catch (error) {
-      res.status(400).json({ message: "Login failed" });
+      res.status(400).json({ message: "Invalid login data" });
     }
   });
 
-  // Create order
+  // Cart routes
+  app.get("/api/cart/:sessionId", async (req, res) => {
+    try {
+      const cartItems = await storage.getCartItems(req.params.sessionId);
+      
+      // Enrich cart items with product data
+      const enrichedItems = [];
+      for (const item of cartItems) {
+        const product = await storage.getProduct(item.productId);
+        if (product) {
+          enrichedItems.push({
+            ...item,
+            product
+          });
+        }
+      }
+      
+      res.json(enrichedItems);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch cart items" });
+    }
+  });
+
+  app.post("/api/cart", async (req, res) => {
+    try {
+      const cartItemData = insertCartItemSchema.parse(req.body);
+      const cartItem = await storage.addToCart(cartItemData);
+      res.json(cartItem);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid cart item data" });
+    }
+  });
+
+  app.put("/api/cart/:id", async (req, res) => {
+    try {
+      const { quantity } = req.body;
+      if (typeof quantity !== "number" || quantity < 0) {
+        return res.status(400).json({ message: "Invalid quantity" });
+      }
+      
+      const cartItem = await storage.updateCartItem(req.params.id, quantity);
+      if (!cartItem) {
+        return res.status(404).json({ message: "Cart item not found" });
+      }
+      
+      res.json(cartItem);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update cart item" });
+    }
+  });
+
+  app.delete("/api/cart/:id", async (req, res) => {
+    try {
+      await storage.removeFromCart(req.params.id);
+      res.json({ message: "Item removed from cart" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to remove cart item" });
+    }
+  });
+
+  app.delete("/api/cart/session/:sessionId", async (req, res) => {
+    try {
+      await storage.clearCart(req.params.sessionId);
+      res.json({ message: "Cart cleared" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to clear cart" });
+    }
+  });
+
+  // Orders routes
   app.post("/api/orders", async (req, res) => {
     try {
-      const { orderData, items } = req.body;
+      const orderData = checkoutSchema.parse(req.body);
       
-      const validatedOrder = insertOrderSchema.parse(orderData);
-      const order = await storage.createOrder(validatedOrder);
-
-      // Create order items
-      for (const item of items) {
-        const validatedItem = insertOrderItemSchema.parse({
-          ...item,
-          orderId: order.id,
-        });
-        await storage.createOrderItem(validatedItem);
+      // Calculate shipping cost
+      const shippingCost = orderData.shippingType === "dhaka" ? 7000 : 13000; // in paisa
+      
+      // Get cart items
+      const { sessionId, ...rest } = req.body;
+      const cartItems = await storage.getCartItems(sessionId);
+      
+      if (cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
       }
-
-      res.status(201).json(order);
+      
+      // Calculate subtotal
+      let subtotal = 0;
+      const orderItems = [];
+      
+      for (const item of cartItems) {
+        const product = await storage.getProduct(item.productId);
+        if (product) {
+          const itemTotal = product.price * item.quantity;
+          subtotal += itemTotal;
+          orderItems.push({
+            productId: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: item.quantity,
+            total: itemTotal
+          });
+        }
+      }
+      
+      const total = subtotal + shippingCost;
+      
+      const order = await storage.createOrder({
+        ...rest,
+        items: JSON.stringify(orderItems),
+        subtotal,
+        shippingCost,
+        total,
+        status: "pending",
+        paymentMethod: "cod"
+      });
+      
+      // Clear cart after successful order
+      await storage.clearCart(sessionId);
+      
+      res.json(order);
     } catch (error) {
-      res.status(400).json({ message: "Failed to create order" });
+      console.error("Order creation error:", error);
+      res.status(400).json({ message: "Invalid order data" });
     }
   });
 
-  // Get user orders
-  app.get("/api/orders/user/:userId", async (req, res) => {
-    try {
-      const orders = await storage.getUserOrders(req.params.userId);
-      res.json(orders);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch orders" });
-    }
-  });
-
-  // Get order with items
   app.get("/api/orders/:id", async (req, res) => {
     try {
       const order = await storage.getOrder(req.params.id);
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
       }
-      
-      const items = await storage.getOrderItems(order.id);
-      res.json({ ...order, items });
+      res.json(order);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch order" });
     }

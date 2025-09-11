@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, timestamp, decimal, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, boolean, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -8,7 +8,7 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
-  name: text("name"),
+  name: text("name").notNull(),
   phone: text("phone"),
   address: text("address"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -19,11 +19,16 @@ export const products = pgTable("products", {
   name: text("name").notNull(),
   nameEn: text("name_en").notNull(),
   description: text("description").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  descriptionEn: text("description_en").notNull(),
+  price: integer("price").notNull(), // in paisa
   image: text("image").notNull(),
   category: text("category").notNull(),
+  categoryEn: text("category_en").notNull(),
+  stock: integer("stock").notNull().default(0),
   weight: text("weight").notNull(),
-  inStock: boolean("in_stock").default(true),
+  shelfLife: text("shelf_life").notNull(),
+  ingredients: text("ingredients").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -33,61 +38,70 @@ export const orders = pgTable("orders", {
   customerName: text("customer_name").notNull(),
   customerPhone: text("customer_phone").notNull(),
   customerAddress: text("customer_address").notNull(),
-  shippingCost: decimal("shipping_cost", { precision: 10, scale: 2 }).notNull(),
-  total: decimal("total", { precision: 10, scale: 2 }).notNull(),
-  status: text("status").default("pending"),
+  items: text("items").notNull(), // JSON string
+  subtotal: integer("subtotal").notNull(),
+  shippingCost: integer("shipping_cost").notNull(),
+  total: integer("total").notNull(),
+  status: text("status").notNull().default("pending"),
+  paymentMethod: text("payment_method").notNull().default("cod"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const orderItems = pgTable("order_items", {
+export const cartItems = pgTable("cart_items", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  orderId: varchar("order_id").notNull(),
   productId: varchar("product_id").notNull(),
-  quantity: integer("quantity").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  quantity: integer("quantity").notNull().default(1),
+  sessionId: text("session_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  email: true,
-  password: true,
-  name: true,
-  phone: true,
-  address: true,
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
 });
 
-export const insertProductSchema = createInsertSchema(products).pick({
-  name: true,
-  nameEn: true,
-  description: true,
-  price: true,
-  image: true,
-  category: true,
-  weight: true,
-  inStock: true,
+export const insertProductSchema = createInsertSchema(products).omit({
+  id: true,
+  createdAt: true,
 });
 
-export const insertOrderSchema = createInsertSchema(orders).pick({
-  userId: true,
-  customerName: true,
-  customerPhone: true,
-  customerAddress: true,
-  shippingCost: true,
-  total: true,
+export const insertOrderSchema = createInsertSchema(orders).omit({
+  id: true,
+  createdAt: true,
 });
 
-export const insertOrderItemSchema = createInsertSchema(orderItems).pick({
-  orderId: true,
-  productId: true,
-  quantity: true,
-  price: true,
+export const insertCartItemSchema = createInsertSchema(cartItems).omit({
+  id: true,
+  createdAt: true,
 });
 
-export type User = typeof users.$inferSelect;
+export const loginSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export const registerSchema = insertUserSchema.extend({
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+export const checkoutSchema = z.object({
+  customerName: z.string().min(1, "Name is required"),
+  customerPhone: z.string().min(1, "Phone number is required"),
+  customerAddress: z.string().min(1, "Address is required"),
+  shippingType: z.enum(["dhaka", "outside"]),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type Product = typeof products.$inferSelect;
+export type User = typeof users.$inferSelect;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
-export type Order = typeof orders.$inferSelect;
+export type Product = typeof products.$inferSelect;
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
-export type OrderItem = typeof orderItems.$inferSelect;
-export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
+export type Order = typeof orders.$inferSelect;
+export type InsertCartItem = z.infer<typeof insertCartItemSchema>;
+export type CartItem = typeof cartItems.$inferSelect;
+export type LoginData = z.infer<typeof loginSchema>;
+export type RegisterData = z.infer<typeof registerSchema>;
+export type CheckoutData = z.infer<typeof checkoutSchema>;
