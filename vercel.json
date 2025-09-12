@@ -2,18 +2,19 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
+      "src": "dist/server/index.js",
       "use": "@vercel/node",
       "config": {
-        "buildCommand": "npm run dev",
-        "includeFiles": ["dist/**"]
+        "includeFiles": [
+          "dist/public/**"
+        ]
       }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "dist/index.js"
+      "dest": "dist/server/index.js"
     }
   ]
 }
