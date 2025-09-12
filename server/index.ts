@@ -53,6 +53,30 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
+    const fs = require("fs");
+    const path = require("path");
+    try {
+      const rootContents = fs.readdirSync(process.cwd());
+      console.log("Root directory contents:", rootContents);
+
+      const distPath = path.resolve(process.cwd(), 'dist');
+      if (fs.existsSync(distPath)) {
+        const distContents = fs.readdirSync(distPath);
+        console.log("dist directory contents:", distContents);
+
+        const publicPath = path.resolve(distPath, 'public');
+        if (fs.existsSync(publicPath)) {
+          const publicContents = fs.readdirSync(publicPath);
+          console.log("public directory contents:", publicContents);
+        } else {
+          console.log("public directory not found");
+        }
+      } else {
+        console.log("dist directory not found");
+      }
+    } catch (e: any) {
+      console.error("Error reading directory:", e.message);
+    }
     serveStatic(app);
   }
 
