@@ -90,32 +90,32 @@ export default function Home() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center" data-testid="feature-1">
-              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Leaf className="text-2xl text-primary" />
+              <div className="bg-primary/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Leaf className="text-primary" size={48} />
               </div>
               <h3 className="text-xl font-bold mb-2">সেরা উপাদানে তৈরি</h3>
               <p className="text-muted-foreground">প্রতিটি উপাদান সতর্কভাবে বাছাই করা হয়, যাতে স্বাদ ও গুণমান অটুট থাকে।</p>
             </div>
             
             <div className="text-center" data-testid="feature-2">
-              <div className="bg-secondary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <HomeIcon className="text-2xl text-secondary" />
+              <div className="bg-secondary/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
+                <HomeIcon className="text-secondary" size={48} />
               </div>
               <h3 className="text-xl font-bold mb-2">ঘরে তৈরি শুদ্ধতম স্বাদ</h3>
               <p className="text-muted-foreground">পারিবারিক রান্নাঘরে তৈরি। প্রতিটি বোতলে লেগে থাকে মায়ের হাতের সেই ঘ্রাণ।</p>
             </div>
             
             <div className="text-center" data-testid="feature-3">
-              <div className="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="text-2xl text-primary" />
+              <div className="bg-accent/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="text-primary" size={48} />
               </div>
               <h3 className="text-xl font-bold mb-2">নিরাপদ প্রিমিয়াম প্যাকেজিং</h3>
               <p className="text-muted-foreground">আধুনিক প্রযুক্তিতে হাইজেনিক পরিবেশে প্রতিটি বৈয়ম প্রিমিয়াম ভাবে প্যাক করা।</p>
             </div>
             
             <div className="text-center" data-testid="feature-4">
-              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="text-2xl text-primary" />
+              <div className="bg-primary/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Heart className="text-primary" size={48} />
               </div>
               <h3 className="text-xl font-bold mb-2">আচারের চেয়েও বেশি কিছু</h3>
               <p className="text-muted-foreground">শুধুই আচার নয়, বরং একটু স্মৃতি, একটু মমতা, একটুকরো শৈশব।</p>
