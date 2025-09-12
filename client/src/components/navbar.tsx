@@ -1,16 +1,19 @@
 import { Link } from "wouter";
-import { Search, User, ShoppingCart, Menu } from "lucide-react";
+import { Search, User, ShoppingCart, Menu, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/lib/cart-store";
 import { useAuthStore } from "@/lib/auth-store";
 import { useMobileMenuStore } from "@/lib/mobile-menu-store";
+import { useWishlistStore } from "@/hooks/use-wishlist";
 
 export default function Navbar() {
   const { toggleCart, getItemCount } = useCartStore();
   const { toggleLogin } = useAuthStore();
   const { openMenu } = useMobileMenuStore();
+  const { items: wishlistItems } = useWishlistStore();
   
   const itemCount = getItemCount();
+  const wishlistItemCount = wishlistItems.length;
 
   return (
     <>
@@ -63,6 +66,22 @@ export default function Navbar() {
               >
                 <User className="h-5 w-5" />
               </Button>
+
+              <Link href="/wishlist">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="relative"
+                  data-testid="wishlist-btn"
+                >
+                  <Heart className="h-5 w-5" />
+                  {wishlistItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center" data-testid="wishlist-count">
+                      {wishlistItemCount}
+                    </span>
+                  )}
+                </Button>
+              </Link>
               
               <Button
                 variant="ghost"

@@ -5,31 +5,62 @@ import { Badge } from "@/components/ui/badge";
 import { Product } from "@shared/schema";
 import { useCartStore } from "@/lib/cart-store";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { useWishlistStore } from "@/hooks/use-wishlist";
+import { useQuickViewStore } from "@/hooks/use-quick-view";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCartStore();
+  const { addItem: addToCart } = useCartStore();
   const { toast } = useToast();
+  const { addItem: addToWishlist, removeItem: removeFromWishlist, isWishlisted } = useWishlistStore();
+  const { openModal } = useQuickViewStore();
+  const [isHovered, setIsHovered] = useState(false);
 
   const formatPrice = (price: number) => {
     return `৳${(price / 100).toFixed(2)}`;
   };
 
   const handleAddToCart = async () => {
-    await addItem(product);
+    await addToCart(product);
     toast({
       title: "Added to Cart",
       description: `${product.name} has been added to your cart.`,
     });
   };
 
+  const handleWishlistClick = () => {
+    if (isWishlisted(product.id)) {
+      removeFromWishlist(product.id);
+      toast({
+        title: "Removed from Wishlist",
+        description: `${product.name} has been removed from your wishlist.`,
+      });
+    } else {
+      addToWishlist(product);
+      toast({
+        title: "Added to Wishlist",
+        description: `${product.name} has been added to your wishlist.`,
+      });
+    }
+  };
+
+  const handleQuickViewClick = () => {
+    openModal(product);
+  };
+
   const isInStock = product.stock > 0;
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300" data-testid={`product-card-${product.id}`}>
+    <Card 
+      className="group hover:shadow-lg transition-all duration-300 relative"
+      data-testid={`product-card-${product.id}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <CardContent className="p-6">
         <div className="relative mb-4">
           <img 
@@ -48,9 +79,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           >
             {isInStock ? "In Stock" : "Out of Stock"}
           </Badge>
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button variant="outline" size="sm" data-testid={`product-wishlist-${product.id}`}>
-              <Heart className="h-4 w-4" />
+          <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button variant="outline" size="sm" onClick={handleWishlistClick} data-testid={`product-wishlist-${product.id}`}>
+              <Heart className={`h-4 w-4 ${isWishlisted(product.id) ? 'text-red-500 fill-current' : ''}`} />
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleQuickViewClick} data-testid={`product-quick-view-${product.id}`}>
+              <Eye className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -70,20 +104,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             <span className="text-2xl font-bold text-primary" data-testid={`product-price-${product.id}`}>
               {formatPrice(product.price)}
             </span>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" data-testid={`product-quick-view-${product.id}`}>
-                <Eye className="h-4 w-4 mr-1" />
-                Quick View
-              </Button>
-              <Button 
-                onClick={handleAddToCart}
-                disabled={!isInStock}
-                data-testid={`product-add-to-cart-${product.id}`}
-              >
-                <ShoppingCart className="h-4 w-4 mr-1" />
-                Add to Cart
-              </Button>
-            </div>
+            <Button 
+              onClick={handleAddToCart}
+              disabled={!isInStock}
+              data-testid={`product-add-to-cart-${product.id}`}
+              className="w-32"
+            >
+              {isHovered ? <ShoppingCart className="h-4 w-4" /> : <span>Add to Cart</span>}
+            </Button>
           </div>
         </div>
       </CardContent>

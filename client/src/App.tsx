@@ -8,10 +8,12 @@ import Home from "@/pages/home";
 import Shop from "@/pages/shop";
 import Cart from "@/pages/cart";
 import Checkout from "@/pages/checkout";
+import Wishlist from "@/pages/Wishlist";
 import Navbar from "@/components/navbar";
 import MobileSidebar from "@/components/mobile-sidebar";
 import LoginModal from "@/components/login-modal";
 import CartModal from "@/components/cart-modal";
+import QuickViewModal from "@/components/QuickViewModal";
 import WhatsAppButton from "@/components/whatsapp-button";
 
 function Router() {
@@ -21,6 +23,7 @@ function Router() {
       <MobileSidebar />
       <LoginModal />
       <CartModal />
+      <QuickViewModal />
       <WhatsAppButton />
       
       <Switch>
@@ -28,6 +31,7 @@ function Router() {
         <Route path="/shop" component={Shop} />
         <Route path="/cart" component={Cart} />
         <Route path="/checkout" component={Checkout} />
+        <Route path="/wishlist" component={Wishlist} />
         <Route component={NotFound} />
       </Switch>
     </>
