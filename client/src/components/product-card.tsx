@@ -33,9 +33,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       <CardContent className="p-6">
         <div className="relative mb-4">
           <img 
-            src={product.image} 
+            src={product.image && product.image.trim() !== "" ? product.image : "/placeholder-image.jpg"} 
             alt={product.name} 
             className="w-full h-48 object-cover rounded-xl"
+            onError={(e) => {
+              e.currentTarget.src = "/placeholder-image.jpg";
+            }}
             data-testid={`product-image-${product.id}`}
           />
           <Badge 

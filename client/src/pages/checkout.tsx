@@ -278,9 +278,12 @@ export default function Checkout() {
                   <div key={item.id} className="flex items-center justify-between mb-3" data-testid={`order-item-${item.id}`}>
                     <div className="flex items-center">
                       <img 
-                        src={item.product.image} 
+                        src={item.product.image && item.product.image.trim() !== "" ? item.product.image : "/placeholder-image.jpg"} 
                         alt={item.product.name} 
                         className="w-10 h-10 object-cover rounded mr-3"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder-image.jpg";
+                        }}
                         data-testid={`order-item-image-${item.id}`}
                       />
                       <span className="text-sm" data-testid={`order-item-name-${item.id}`}>

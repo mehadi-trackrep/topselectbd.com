@@ -68,9 +68,12 @@ export default function Cart() {
                   {items.map((item) => (
                     <div key={item.id} className="flex items-center gap-4 p-4 bg-muted rounded-lg" data-testid={`cart-item-${item.id}`}>
                       <img 
-                        src={item.product.image} 
+                        src={item.product.image && item.product.image.trim() !== "" ? item.product.image : "/placeholder-image.jpg"} 
                         alt={item.product.name} 
                         className="w-20 h-20 object-cover rounded-lg"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder-image.jpg";
+                        }}
                         data-testid={`cart-item-image-${item.id}`}
                       />
                       

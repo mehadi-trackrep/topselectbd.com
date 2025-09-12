@@ -46,12 +46,16 @@ export default function CartModal() {
                 {/* Cart items */}
                 <div className="space-y-4 mb-8" data-testid="cart-items">
                   {items.map((item) => (
+                    item.product &&
                     <div key={item.id} className="flex items-center justify-between p-4 bg-muted rounded-lg" data-testid={`cart-item-${item.id}`}>
                       <div className="flex items-center">
                         <img 
-                          src={item.product.image} 
+                          src={item.product.image && item.product.image.trim() !== "" ? item.product.image : "/placeholder-image.jpg"} 
                           alt={item.product.name} 
                           className="w-16 h-16 object-cover rounded-lg mr-4"
+                          onError={(e) => {
+                            e.currentTarget.src = "/placeholder-image.jpg";
+                          }}
                           data-testid={`cart-item-image-${item.id}`}
                         />
                         <div>
