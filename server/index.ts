@@ -10,7 +10,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000', 
     'http://localhost:5173',
-    'https://your-vercel-frontend.vercel.app' // Replace with your actual Vercel URL
+    'https://modern-ecommercesite.vercel.app' // Replace with your actual Vercel URL
   ],
   credentials: true,
   optionsSuccessStatus: 200
