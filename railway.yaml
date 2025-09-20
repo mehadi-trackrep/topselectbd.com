@@ -1,0 +1,11 @@
+version: 1
+services:
+  ecommerce-api:
+    build:
+      builder: nixpacks
+      buildCommand: cd server && npm install && npm run build
+    deploy:
+      startCommand: cd server && npm start
+      port: 5000
+      env:
+        NODE_ENV: production

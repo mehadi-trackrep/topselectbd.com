@@ -10,7 +10,8 @@ app.use(cors({
   origin: [
     'http://localhost:3000', 
     'http://localhost:5173',
-    'https://modern-ecommercesite.vercel.app' // Replace with your actual Vercel URL
+    'https://modern-ecommercesite.vercel.app', // Replace with your actual Vercel URL
+    'https://modern-ecommercesite.up.railway.app' // Replace with your actual Railway URL
   ],
   credentials: true,
   optionsSuccessStatus: 200
