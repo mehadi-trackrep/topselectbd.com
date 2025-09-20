@@ -1,8 +1,21 @@
 import express, { type Request, Response, NextFunction } from "express";
+import cors from "cors"; // Add this import
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// Add CORS configuration
+app.use(cors({
+  origin: [
+    'http://localhost:3000', 
+    'http://localhost:5173',
+    'https://your-vercel-frontend.vercel.app' // Replace with your actual Vercel URL
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -57,10 +70,10 @@ app.use((req, res, next) => {
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
+  // Other ports are firewalled. Default to 5001 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-const port = parseInt(process.env.PORT || '3000', 10);
+  const port = parseInt(process.env.PORT || '5001', 10);
   // host: process.env.NODE_ENV === "development" ? "127.0.0.1" : "0.0.0.0";
   server.listen({
     port,

@@ -13,8 +13,17 @@ export default function Shop() {
   const [priceFilter, setPriceFilter] = useState("all-prices");
   const [stockFilter, setStockFilter] = useState("all-stock");
 
-  const { data: products = [], isLoading } = useQuery<Product[]>({
-    queryKey: ["/api/products"],
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+
+  const { data: products = [], isLoading, error } = useQuery<Product[]>({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE_URL}/products`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+      return response.json();
+    },
   });
 
   // Filter products based on search and filters
@@ -45,6 +54,18 @@ export default function Shop() {
 
     return matchesSearch && matchesCategory && matchesPrice && matchesStock;
   });
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-16">
+            <p className="text-red-500">Error loading products: {error.message}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-8" data-testid="shop-page">
