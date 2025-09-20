@@ -12,7 +12,7 @@
     "migrate:deploy": "drizzle-kit migrate",
     "start": "node dist/index.js",
     "start:dev": "npm run migrate && npm run dev",
-    "start:prod": "npm run migrate:deploy && npm start"
+    "start:prod": "npm run build && npm run migrate:deploy && npm start"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",

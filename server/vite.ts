@@ -1,16 +1,14 @@
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
-import { createServer as createViteServer, createLogger } from "vite";
+import { type Server as ViteDevServer } from "vite";
 import { nanoid } from 'nanoid';
 import { type Server } from "http";
 import { fileURLToPath } from 'url';
 
 // ES Module equivalent of __dirname
-const __filename = fileURLToPath(import.meta.url);
+const __filename = fileURLToPath(import.meta.url) as string;
 const __dirname = path.dirname(__filename);
-
-const viteLogger = createLogger();
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -24,6 +22,10 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
+  // Dynamically import vite to avoid type issues
+  const viteModule: any = await import('vite');
+  const { createServer: createViteServer } = viteModule;
+
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
@@ -31,15 +33,7 @@ export async function setupVite(app: Express, server: Server) {
   };
 
   const vite = await createViteServer({
-    // Instead of importing the config, define it inline or use a relative path
     configFile: path.resolve(__dirname, '../client/vite.config.ts'),
-    customLogger: {
-      ...viteLogger,
-      error: (msg, options) => {
-        viteLogger.error(msg, options);
-        process.exit(1);
-      },
-    },
     server: serverOptions,
     appType: "custom",
   });
@@ -61,7 +55,7 @@ export async function setupVite(app: Express, server: Server) {
         "index.html",
       );
 
-      // always reload the index.html file from disk incase it changes
+      // always reload the index.html file from disk in case it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
       template = template.replace(
         `src="/src/main.tsx"`,
@@ -92,3 +86,5 @@ export function serveStatic(app: Express) {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
+
+export { Server };

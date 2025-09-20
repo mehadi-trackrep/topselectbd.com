@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Product, type InsertProduct, type Order, type InsertOrder, type CartItem, type InsertCartItem } from "@shared/schema";
+import { type User, type InsertUser, type Product, type InsertProduct, type Order, type InsertOrder, type CartItem, type InsertCartItem } from "../shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -108,6 +108,8 @@ export class MemStorage implements IStorage {
         ...productData,
         id: randomUUID(),
         createdAt: new Date(),
+        stock: productData.stock ?? 0,
+        isActive: productData.isActive ?? true
       };
       this.products.set(product.id, product);
     });
@@ -132,7 +134,7 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id, createdAt: new Date() };
+    const user: User = { ...insertUser, id, createdAt: new Date(), phone: insertUser.phone ?? null, address: insertUser.address ?? null };
     this.users.set(id, user);
     return user;
   }
@@ -149,7 +151,7 @@ export class MemStorage implements IStorage {
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
     const id = randomUUID();
-    const product: Product = { ...insertProduct, id, createdAt: new Date() };
+    const product: Product = { ...insertProduct, id, createdAt: new Date(), stock: insertProduct.stock ?? 0, isActive: insertProduct.isActive ?? true };
     this.products.set(id, product);
     return product;
   }
@@ -176,7 +178,14 @@ export class MemStorage implements IStorage {
   // Orders
   async createOrder(insertOrder: InsertOrder): Promise<Order> {
     const id = randomUUID();
-    const order: Order = { ...insertOrder, id, createdAt: new Date() };
+    const order: Order = {
+      ...insertOrder,
+      id,
+      createdAt: new Date(),
+      userId: insertOrder.userId ?? null,
+      status: insertOrder.status ?? 'pending',
+      paymentMethod: insertOrder.paymentMethod ?? 'cod'
+    };
     this.orders.set(id, order);
     return order;
   }
@@ -200,13 +209,20 @@ export class MemStorage implements IStorage {
 
     if (existingItem) {
       // Update quantity
-      existingItem.quantity += insertItem.quantity;
+      if (insertItem.quantity !== undefined) {
+        existingItem.quantity += insertItem.quantity;
+      }
       this.cartItems.set(existingItem.id, existingItem);
       return existingItem;
     } else {
       // Create new cart item
       const id = randomUUID();
-      const cartItem: CartItem = { ...insertItem, id, createdAt: new Date() };
+      const cartItem: CartItem = {
+        ...insertItem,
+        id,
+        createdAt: new Date(),
+        quantity: insertItem.quantity ?? 1
+      };
       this.cartItems.set(id, cartItem);
       return cartItem;
     }
