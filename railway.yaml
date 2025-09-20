@@ -6,6 +6,7 @@ services:
       buildCommand: cd server && npm install && npm run build
     deploy:
       startCommand: cd server && npm start
+      initCommand: cd server && npm run migrate:deploy
       port: 5000
       env:
         NODE_ENV: production
