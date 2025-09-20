@@ -49,6 +49,11 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
+      // Skip serving index.html for API routes
+      if (url.startsWith('/api/')) {
+        return next();
+      }
+
       const clientTemplate = path.resolve(
         __dirname,
         "..",

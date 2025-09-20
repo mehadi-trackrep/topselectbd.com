@@ -43,8 +43,25 @@ export default function Checkout() {
 
   const createOrderMutation = useMutation({
     mutationFn: async (data: CheckoutData & { sessionId: string }) => {
-      const response = await apiRequest("POST", "/api/orders", data);
-      return await response.json();
+      try {
+        const response = await apiRequest("POST", "/orders", data);
+        const text = await response.text();
+        
+        // Check if response is JSON
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          // If it's not JSON, it might be an HTML error page
+          if (text.startsWith('<')) {
+            throw new Error('Server returned an unexpected error page. Please try again.');
+          } else {
+            throw new Error(`Server returned invalid response: ${text.substring(0, 100)}...`);
+          }
+        }
+      } catch (error) {
+        // Re-throw the error so it can be handled by onError
+        throw error;
+      }
     },
     onSuccess: (order) => {
       setOrderId(order.id);
@@ -55,9 +72,10 @@ export default function Checkout() {
         description: "Your order has been placed successfully.",
       });
       // Invalidate any order-related queries
-      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
+      queryClient.invalidateQueries({ queryKey: ["/orders"] });
     },
     onError: (error: any) => {
+      console.error("Order creation error:", error);
       toast({
         title: "Order Failed",
         description: error.message || "Failed to place order. Please try again.",

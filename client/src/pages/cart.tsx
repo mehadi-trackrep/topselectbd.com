@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Minus, Plus, X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -5,7 +6,12 @@ import { useCartStore } from "@/lib/cart-store";
 import { Link } from "wouter";
 
 export default function Cart() {
-  const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore();
+  const { items, updateQuantity, removeItem, getTotal, clearCart, loadCartFromServer } = useCartStore();
+
+  useEffect(() => {
+    // Load cart data from server when component mounts
+    loadCartFromServer();
+  }, [loadCartFromServer]);
 
   const formatPrice = (price: number) => {
     return `৳${(price / 100).toFixed(2)}`;
