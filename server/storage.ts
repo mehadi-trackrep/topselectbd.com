@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Product, type InsertProduct, type Order, type InsertOrder, type CartItem, type InsertCartItem } from "../shared/schema";
+import type { User, InsertUser, Product, InsertProduct, Order, InsertOrder, CartItem, InsertCartItem } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {

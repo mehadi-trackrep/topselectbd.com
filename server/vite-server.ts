@@ -1,7 +1,7 @@
+import { createServer } from "vite";
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
-import { type Server as ViteDevServer } from "vite";
 import { nanoid } from 'nanoid';
 import { type Server } from "http";
 import { fileURLToPath } from 'url';
@@ -22,20 +22,15 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
-  // Dynamically import vite to avoid type issues
-  const viteModule: any = await import('vite');
-  const { createServer: createViteServer } = viteModule;
+  
 
-  const serverOptions = {
-    middlewareMode: true,
-    hmr: { server },
-    allowedHosts: true as const,
-  };
-
-  const vite = await createViteServer({
+  const vite = await createServer({
     configFile: path.resolve(__dirname, '../client/vite.config.ts'),
-    server: serverOptions,
-    appType: "custom",
+    server: {
+      middlewareMode: true,
+      hmr: { server },
+    },
+    appType: 'custom',
   });
 
   app.use(vite.middlewares);
@@ -86,5 +81,3 @@ export function serveStatic(app: Express) {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
-
-export { Server };
