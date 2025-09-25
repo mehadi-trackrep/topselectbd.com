@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Product } from '@shared/schema';
+import { Product } from '@/shared/schema';
 import { apiRequest } from './queryClient';
 
 export interface CartItem {
@@ -73,7 +73,6 @@ export const useCartStore = create<CartState>()(
         
         // Sync with backend first
         try {
-          const { sessionId } = get();
           await apiRequest("PUT", `/cart/${id}`, {
             quantity
           });
@@ -120,12 +119,19 @@ export const useCartStore = create<CartState>()(
 
       getTotal: () => {
         const { items } = get();
-        return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+        return items.reduce((total, item) => {
+          const price = typeof item.product.price === 'string' ? parseInt(item.product.price) : item.product.price;
+          const quantity = typeof item.quantity === 'string' ? parseInt(item.quantity) : item.quantity;
+          return total + (price * quantity);
+        }, 0);
       },
 
       getItemCount: () => {
         const { items } = get();
-        return items.reduce((count, item) => count + item.quantity, 0);
+        return items.reduce((count, item) => {
+          const quantity = typeof item.quantity === 'string' ? parseInt(item.quantity) : item.quantity;
+          return count + quantity;
+        }, 0);
       },
 
       toggleCart: () => {

@@ -2,7 +2,7 @@ import { Heart, ShoppingCart, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Product } from "@shared/schema";
+import { Product } from "@/shared/schema";
 import { useCartStore } from "@/lib/cart-store";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -20,8 +20,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { openModal } = useQuickViewStore();
   const [isHovered, setIsHovered] = useState(false);
 
-  const formatPrice = (price: number) => {
-    return `৳${(price / 100).toFixed(2)}`;
+  const formatPrice = (price: number | string) => {
+    const numericPrice = typeof price === 'string' ? parseInt(price) : price;
+    return `৳${(numericPrice / 100).toFixed(2)}`;
   };
 
   const handleAddToCart = async () => {
@@ -52,7 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     openModal(product);
   };
 
-  const isInStock = product.stock > 0;
+  const isInStock = (typeof product.stock === 'string' ? parseInt(product.stock) : product.stock) > 0;
 
   return (
     <Card 

@@ -13,8 +13,9 @@ export default function Cart() {
     loadCartFromServer();
   }, [loadCartFromServer]);
 
-  const formatPrice = (price: number) => {
-    return `৳${(price / 100).toFixed(2)}`;
+  const formatPrice = (price: number | string) => {
+    const numericPrice = typeof price === 'string' ? parseInt(price) : price;
+    return `৳${(numericPrice / 100).toFixed(2)}`;
   };
 
   const shippingCostDhaka = 7000; // 70.00 BDT in paisa
@@ -119,7 +120,7 @@ export default function Cart() {
 
                       <div className="text-right">
                         <p className="font-bold" data-testid={`item-total-${item.id}`}>
-                          {formatPrice(item.product.price * item.quantity)}
+                          {formatPrice((typeof item.product.price === 'string' ? parseInt(item.product.price) : item.product.price) * (typeof item.quantity === 'string' ? parseInt(item.quantity) : item.quantity))}
                         </p>
                         <Button
                           variant="ghost"

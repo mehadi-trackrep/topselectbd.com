@@ -7,8 +7,8 @@ import { useAuthStore } from "@/lib/auth-store";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, registerSchema, type LoginData, type RegisterData } from "@shared/schema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { loginSchema, registerSchema, type LoginData, type RegisterData } from "@/shared/schema";
+import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,7 +17,7 @@ export default function LoginModal() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  
 
   const loginForm = useForm<LoginData>({
     resolver: zodResolver(loginSchema),

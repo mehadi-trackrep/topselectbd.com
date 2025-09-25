@@ -4,7 +4,7 @@ import { Link } from "wouter";
 import HeroCarousel from "@/components/hero-carousel";
 import ProductCard from "@/components/product-card";
 import { useQuery } from "@tanstack/react-query";
-import { Product } from "@shared/schema";
+import { Product } from "@/shared/schema";
 
 export default function Home() {
   const { data: products = [], isLoading } = useQuery<Product[]>({

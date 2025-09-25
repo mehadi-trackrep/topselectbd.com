@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Product } from '@shared/schema';
+import { Product } from '@/shared/schema';
 
 interface QuickViewState {
   isOpen: boolean;

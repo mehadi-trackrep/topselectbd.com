@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User } from '@shared/schema';
+import { User } from '@/shared/schema';
 
 interface AuthState {
   user: User | null;
   isLoginOpen: boolean;
-  isRegisterMode: false;
+  isRegisterMode: boolean;
   login: (user: User) => void;
   logout: () => void;
   toggleLogin: () => void;

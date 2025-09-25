@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Product } from '@shared/schema';
+import { Product } from '@/shared/schema';
 
 interface WishlistState {
   items: Product[];
   addItem: (item: Product) => void;
-  removeItem: (itemId: number) => void;
-  isWishlisted: (itemId: number) => boolean;
+  removeItem: (itemId: string) => void;
+  isWishlisted: (itemId: string) => boolean;
 }
 
 export const useWishlistStore = create<WishlistState>()(

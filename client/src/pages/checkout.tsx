@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Lock, Check } from "lucide-react";
+import { Lock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,17 +7,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCartStore } from "@/lib/cart-store";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { checkoutSchema, type CheckoutData } from "@shared/schema";
+import { checkoutSchema, type CheckoutData } from "@/shared/schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Checkout() {
   const { items, getTotal, clearCart, sessionId } = useCartStore();
-  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [orderConfirmed, setOrderConfirmed] = useState(false);
@@ -310,7 +309,7 @@ export default function Checkout() {
                       <span className="ml-2 text-sm">× {item.quantity}</span>
                     </div>
                     <span className="text-sm font-medium" data-testid={`order-item-total-${item.id}`}>
-                      {(item.product.price * item.quantity / 100).toFixed(2)}৳
+                      {((typeof item.product.price === 'string' ? parseInt(item.product.price) : item.product.price) * (typeof item.quantity === 'string' ? parseInt(item.quantity) : item.quantity) / 100).toFixed(2)}৳
                     </span>
                   </div>
                 ))}

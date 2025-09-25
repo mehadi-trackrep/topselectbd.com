@@ -1,14 +1,12 @@
-import Navigation from "@/components/Navigation";
-import CartSidebar from "@/components/CartSidebar";
-import LoginModal from "@/components/LoginModal";
-import RegisterModal from "@/components/RegisterModal";
-import Footer from "@/components/Footer";
-import WhatsAppWidget from "@/components/WhatsAppWidget";
+import Navbar from "@/components/navbar";
+import CartModal from "@/components/cart-modal";
+import LoginModal from "@/components/login-modal";
+import WhatsAppButton from "@/components/whatsapp-button";
 
 export default function About() {
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <Navbar />
       
       {/* Hero Section */}
       <section className="bg-primary/10 py-16">
@@ -124,15 +122,12 @@ export default function About() {
         </div>
       </section>
 
-      <Footer />
-
       {/* Modals */}
-      <CartSidebar />
+      <CartModal />
       <LoginModal />
-      <RegisterModal />
       
       {/* WhatsApp Widget */}
-      <WhatsAppWidget />
+      <WhatsAppButton />
     </div>
   );
 }

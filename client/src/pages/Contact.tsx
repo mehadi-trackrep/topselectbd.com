@@ -4,12 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import Navigation from "@/components/Navigation";
-import CartSidebar from "@/components/CartSidebar";
-import LoginModal from "@/components/LoginModal";
-import RegisterModal from "@/components/RegisterModal";
-import Footer from "@/components/Footer";
-import WhatsAppWidget from "@/components/WhatsAppWidget";
+import Navbar from "@/components/navbar";
+import CartModal from "@/components/cart-modal";
+import LoginModal from "@/components/login-modal";
+import WhatsAppButton from "@/components/whatsapp-button";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Contact() {
@@ -38,7 +36,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <Navbar />
       
       {/* Hero Section */}
       <section className="bg-primary/10 py-16">
@@ -213,15 +211,14 @@ export default function Contact() {
         </div>
       </div>
 
-      <Footer />
-
+      
       {/* Modals */}
-      <CartSidebar />
+      <CartModal />
       <LoginModal />
-      <RegisterModal />
+      {/* Remove RegisterModal as it's not imported */}
       
       {/* WhatsApp Widget */}
-      <WhatsAppWidget />
+      <WhatsAppButton />
     </div>
   );
 }

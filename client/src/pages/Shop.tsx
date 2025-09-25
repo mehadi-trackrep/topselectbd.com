@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import ProductCard from "@/components/product-card";
 import { useQuery } from "@tanstack/react-query";
-import { Product } from "@shared/schema";
+import { Product } from "@/shared/schema";
 
 export default function Shop() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -35,7 +35,7 @@ export default function Shop() {
     const matchesCategory = !categoryFilter || categoryFilter === "all-categories" || product.category === categoryFilter || product.categoryEn === categoryFilter;
     
     const matchesPrice = !priceFilter || priceFilter === "all-prices" || (() => {
-      const price = product.price / 100;
+      const price = (typeof product.price === 'string' ? parseInt(product.price) : product.price) / 100;
       switch (priceFilter) {
         case "500-600":
           return price >= 500 && price <= 600;
@@ -49,8 +49,8 @@ export default function Shop() {
     })();
 
     const matchesStock = !stockFilter || stockFilter === "all-stock" || 
-                        (stockFilter === "in-stock" && product.stock > 0) ||
-                        (stockFilter === "out-of-stock" && product.stock === 0);
+                        (stockFilter === "in-stock" && (typeof product.stock === 'string' ? parseInt(product.stock) : product.stock) > 0) ||
+                        (stockFilter === "out-of-stock" && (typeof product.stock === 'string' ? parseInt(product.stock) : product.stock) === 0);
 
     return matchesSearch && matchesCategory && matchesPrice && matchesStock;
   });

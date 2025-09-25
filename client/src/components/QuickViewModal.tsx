@@ -22,8 +22,9 @@ export default function QuickViewModal() {
     closeModal();
   };
 
-  const formatPrice = (price: number) => {
-    return `৳${(price / 100).toFixed(2)}`;
+  const formatPrice = (price: number | string) => {
+    const numericPrice = typeof price === 'string' ? parseInt(price) : price;
+    return `৳${(numericPrice / 100).toFixed(2)}`;
   };
 
   return (
@@ -78,7 +79,7 @@ export default function QuickViewModal() {
               </div>
               <Button 
                 onClick={handleAddToCart}
-                disabled={product.stock === 0}
+                disabled={(typeof product.stock === 'string' ? parseInt(product.stock) : product.stock) === 0}
                 data-testid={`quick-view-add-to-cart-${product.id}`}
               >
                 <ShoppingCart className="h-4 w-4 mr-2" />
