@@ -2,13 +2,13 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@shared/*": ["./shared/*"]
+      "@shared/*": ["server/shared/*"]
     }
   },
   "include": [
     "client/**/*",
     "server/**/*",
-    "shared/**/*"
+    "server/shared/**/*"
   ],
   "exclude": [
     "node_modules",

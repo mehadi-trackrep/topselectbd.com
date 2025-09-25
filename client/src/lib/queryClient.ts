@@ -31,6 +31,11 @@ export async function apiRequest(
   // Otherwise, prepend the API base URL
   const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
 
+  console.log(`API Request: ${method} ${fullUrl}`);
+  if (data) {
+    console.log("Payload:", data);
+  }
+
   const res = await fetch(fullUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
