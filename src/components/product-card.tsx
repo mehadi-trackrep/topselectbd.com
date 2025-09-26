@@ -1,11 +1,11 @@
-import { Heart, ShoppingCart, Eye } from "lucide-react";
+import { Heart, ShoppingCart, Eye, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/shared/schema";
 import { useCartStore } from "@/lib/cart-store";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWishlistStore } from "@/hooks/use-wishlist";
 import { useQuickViewStore } from "@/hooks/use-quick-view";
 
@@ -19,6 +19,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isWishlisted } = useWishlistStore();
   const { openModal } = useQuickViewStore();
   const [isHovered, setIsHovered] = useState(false);
+  const [cartFeedback, setCartFeedback] = useState<{ show: boolean; message: string }>({ show: false, message: "" });
+  const [wishlistFeedback, setWishlistFeedback] = useState<{ show: boolean; message: string }>({ show: false, message: "" });
 
   const formatPrice = (price: number | string) => {
     const numericPrice = typeof price === 'string' ? parseInt(price) : price;
@@ -27,6 +29,10 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const handleAddToCart = async () => {
     await addToCart(product);
+    setCartFeedback({ show: true, message: "Added to Cart!" });
+    setTimeout(() => setCartFeedback({ show: false, message: "" }), 2000); // Hide feedback after 2 seconds
+    
+    // Show global toast as well for important notification
     toast({
       title: "Added to Cart",
       description: `${product.name} has been added to your cart.`,
@@ -36,12 +42,18 @@ export default function ProductCard({ product }: ProductCardProps) {
   const handleWishlistClick = () => {
     if (isWishlisted(product.id)) {
       removeFromWishlist(product.id);
+      setWishlistFeedback({ show: true, message: "Removed!" });
+      setTimeout(() => setWishlistFeedback({ show: false, message: "" }), 2000); // Hide feedback after 2 seconds
+      
       toast({
         title: "Removed from Wishlist",
         description: `${product.name} has been removed from your wishlist.`,
       });
     } else {
       addToWishlist(product);
+      setWishlistFeedback({ show: true, message: "Added!" });
+      setTimeout(() => setWishlistFeedback({ show: false, message: "" }), 2000); // Hide feedback after 2 seconds
+      
       toast({
         title: "Added to Wishlist",
         description: `${product.name} has been added to your wishlist.`,
@@ -81,9 +93,18 @@ export default function ProductCard({ product }: ProductCardProps) {
             {isInStock ? "In Stock" : "Out of Stock"}
           </Badge>
           <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button variant="outline" size="sm" onClick={handleWishlistClick} data-testid={`product-wishlist-${product.id}`}>
-              <Heart className={`h-4 w-4 ${isWishlisted(product.id) ? 'text-red-500 fill-current' : ''}`} />
-            </Button>
+            <div className="relative">
+              <Button variant="outline" size="sm" onClick={handleWishlistClick} data-testid={`product-wishlist-${product.id}`}>
+                <Heart className={`h-4 w-4 ${isWishlisted(product.id) ? 'text-red-500 fill-current' : ''}`} />
+              </Button>
+              {wishlistFeedback.show && (
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50">
+                  {wishlistFeedback.message}
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full w-0 h-0 
+                    border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-black"></div>
+                </div>
+              )}
+            </div>
             <Button variant="outline" size="sm" onClick={handleQuickViewClick} data-testid={`product-quick-view-${product.id}`}>
               <Eye className="h-4 w-4" />
             </Button>
@@ -101,18 +122,27 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.description}
           </p>
           
-          <div className="flex items-center justify-between pt-4">
+          <div className="flex items-center justify-between pt-4 relative">
             <span className="text-2xl font-bold text-primary" data-testid={`product-price-${product.id}`}>
               {formatPrice(product.price)}
             </span>
-            <Button 
-              onClick={handleAddToCart}
-              disabled={!isInStock}
-              data-testid={`product-add-to-cart-${product.id}`}
-              className="w-32"
-            >
-              {isHovered ? <ShoppingCart className="h-4 w-4" /> : <span>Add to Cart</span>}
-            </Button>
+            <div className="relative">
+              <Button 
+                onClick={handleAddToCart}
+                disabled={!isInStock}
+                data-testid={`product-add-to-cart-${product.id}`}
+                className="w-32"
+              >
+                {isHovered ? <ShoppingCart className="h-4 w-4" /> : <span>Add to Cart</span>}
+              </Button>
+              {cartFeedback.show && (
+                <div className="absolute -top-8 right-0 transform translate-y-[-10px] bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50">
+                  {cartFeedback.message}
+                  <div className="absolute bottom-0 right-3 transform translate-y-full w-0 h-0 
+                    border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-black"></div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
