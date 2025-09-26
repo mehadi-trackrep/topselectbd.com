@@ -1,20 +1,8 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "dist/server/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "dist/public/**"
-        ]
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "dist/server/index.js"
+      "source": "/api/(.*)",
+      "destination": "https://your-backend-url.railway.com/api/$1"
     }
   ]
 }
