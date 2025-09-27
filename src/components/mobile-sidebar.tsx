@@ -92,22 +92,12 @@ export default function MobileSidebar() {
                   >
                     PORTFOLIO
                   </a>
-                  <a 
-                    href="#about" 
-                    className="block py-4 text-gray-700 border-b border-gray-100 hover:text-black transition-colors"
-                    onClick={closeMenu}
-                    data-testid="mobile-nav-about"
-                  >
+                  <Link href="/about" onClick={closeMenu} className="block py-4 text-gray-700 border-b border-gray-100 hover:text-black transition-colors" data-testid="mobile-nav-about">
                     ABOUT US
-                  </a>
-                  <a 
-                    href="#contact" 
-                    className="block py-4 text-gray-700 border-b border-gray-100 hover:text-black transition-colors"
-                    onClick={closeMenu}
-                    data-testid="mobile-nav-contact"
-                  >
+                  </Link>
+                  <Link href="/contact" onClick={closeMenu} className="block py-4 text-gray-700 border-b border-gray-100 hover:text-black transition-colors" data-testid="mobile-nav-contact">
                     CONTACT US
-                  </a>
+                  </Link>
                   <a 
                     href="#wishlist" 
                     className="flex items-center py-4 text-gray-700 border-b border-gray-100 hover:text-black transition-colors"

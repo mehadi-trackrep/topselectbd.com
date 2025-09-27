@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import HeroCarousel from "@/components/hero-carousel";
 import ProductCard from "@/components/product-card";
+import Footer from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "@/shared/schema";
 
@@ -151,8 +152,8 @@ export default function Home() {
               <div className="space-y-2">
                 <Link href="/"><a className="block text-background/80 hover:text-background transition-colors" data-testid="footer-home">Home</a></Link>
                 <Link href="/shop"><a className="block text-background/80 hover:text-background transition-colors" data-testid="footer-shop">Shop</a></Link>
-                <a href="#about" className="block text-background/80 hover:text-background transition-colors" data-testid="footer-about">About Us</a>
-                <a href="#contact" className="block text-background/80 hover:text-background transition-colors" data-testid="footer-contact">Contact</a>
+                <Link href="/about" className="block text-background/80 hover:text-background transition-colors" data-testid="footer-about">About Us</Link>
+                <Link href="/contact" className="block text-background/80 hover:text-background transition-colors" data-testid="footer-contact">Contact</Link>
               </div>
             </div>
             

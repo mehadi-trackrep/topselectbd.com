@@ -48,8 +48,8 @@ export default function Navbar() {
               <Link href="/shop" className="text-foreground hover:text-primary transition-colors" data-testid="nav-shop">
                 Shop
               </Link>
-              <a href="#about" className="text-foreground hover:text-primary transition-colors" data-testid="nav-about">About</a>
-              <a href="#contact" className="text-foreground hover:text-primary transition-colors" data-testid="nav-contact">Contact</a>
+              <Link href="/about" className="text-foreground hover:text-primary transition-colors" data-testid="nav-about">About</Link>
+              <Link href="/contact" className="text-foreground hover:text-primary transition-colors" data-testid="nav-contact">Contact</Link>
             </div>
             
             {/* Right side actions */}

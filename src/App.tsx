@@ -9,6 +9,8 @@ import Shop from "@/pages/Shop";
 import Cart from "@/pages/cart";
 import Checkout from "@/pages/checkout";
 import Wishlist from "@/pages/Wishlist";
+import About from "@/pages/About";
+import Contact from "@/pages/Contact";
 import Navbar from "@/components/navbar";
 import MobileSidebar from "@/components/mobile-sidebar";
 import LoginModal from "@/components/login-modal";
@@ -32,6 +34,8 @@ function Router() {
         <Route path="/cart" component={Cart} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/wishlist" component={Wishlist} />
+        <Route path="/about" component={About} />
+        <Route path="/contact" component={Contact} />
         <Route component={NotFound} />
       </Switch>
     </>
