@@ -1,6 +1,12 @@
 import { Link } from "wouter";
-import { Search, User, ShoppingCart, Menu, Heart } from "lucide-react";
+import { Search, User, ShoppingCart, Menu, Heart, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 import { useCartStore } from "@/lib/cart-store";
 import { useAuthStore } from "@/lib/auth-store";
 import { useMobileMenuStore } from "@/lib/mobile-menu-store";
@@ -8,7 +14,7 @@ import { useWishlistStore } from "@/hooks/use-wishlist";
 
 export default function Navbar() {
   const { toggleCart, getItemCount } = useCartStore();
-  const { toggleLogin } = useAuthStore();
+  const { user, toggleLogin, logout } = useAuthStore();
   const { openMenu } = useMobileMenuStore();
   const { items: wishlistItems } = useWishlistStore();
   
@@ -58,14 +64,31 @@ export default function Navbar() {
                 <Search className="h-5 w-5" />
               </Button>
               
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleLogin}
-                data-testid="login-btn"
-              >
-                <User className="h-5 w-5" />
-              </Button>
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center space-x-1">
+                      <User className="h-5 w-5" />
+                      <span>Hi, {user.username}!</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Logout</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleLogin}
+                  data-testid="login-btn"
+                >
+                  <User className="h-5 w-5" />
+                </Button>
+              )}
 
               <Link href="/wishlist">
                 <Button

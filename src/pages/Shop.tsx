@@ -28,7 +28,7 @@ export default function Shop() {
       const result = await response.json();
       
       // Extract unique categories for the step-by-step selection
-      const categories = Array.from(new Set(result.map((p: Product) => p.category || p.categoryEn)));
+      const categories = Array.from(new Set(result.map((p: Product) => p.category || p.categoryEn))) as string[];
       setAllCategories(categories);
       
       return result;
@@ -105,7 +105,7 @@ export default function Shop() {
                   max={2000}
                   step={10}
                   value={priceRange}
-                  onValueChange={setPriceRange}
+                  onValueChange={(value: [number, number]) => setPriceRange(value)}
                   className="w-full"
                   data-testid="price-slider"
                 />

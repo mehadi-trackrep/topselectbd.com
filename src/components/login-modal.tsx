@@ -13,11 +13,16 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 export default function LoginModal() {
-  const { isLoginOpen, isRegisterMode, setLoginOpen, toggleRegisterMode, login } = useAuthStore();
+  const { 
+    isLoginOpen, 
+    isRegisterMode, 
+    setLoginOpen, 
+    toggleRegisterMode, 
+    login 
+  } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
-  
 
   const loginForm = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
@@ -42,7 +47,7 @@ export default function LoginModal() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginData) => {
-      const response = await apiRequest("POST", "/api/auth/login", data);
+      const response = await apiRequest("POST", "/auth/login", data);
       return await response.json();
     },
     onSuccess: (user) => {
@@ -65,7 +70,7 @@ export default function LoginModal() {
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterData) => {
       const { confirmPassword, ...userData } = data;
-      const response = await apiRequest("POST", "/api/auth/register", userData);
+      const response = await apiRequest("POST", "/auth/register", userData);
       return await response.json();
     },
     onSuccess: (user) => {
@@ -77,11 +82,20 @@ export default function LoginModal() {
       registerForm.reset();
     },
     onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Registration failed",
-        variant: "destructive",
-      });
+      // Handle 404 errors specifically for missing endpoints
+      if (error.message && error.message.includes("404")) {
+        toast({
+          title: "Error",
+          description: "Registration endpoint not found. Please contact support.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Registration failed",
+          variant: "destructive",
+        });
+      }
     },
   });
 

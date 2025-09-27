@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import HeroCarousel from "@/components/hero-carousel";
 import ProductCard from "@/components/product-card";
-import Footer from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "@/shared/schema";
 

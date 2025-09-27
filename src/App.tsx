@@ -17,6 +17,8 @@ import LoginModal from "@/components/login-modal";
 import CartModal from "@/components/cart-modal";
 import QuickViewModal from "@/components/QuickViewModal";
 import WhatsAppButton from "@/components/whatsapp-button";
+import { useEffect } from "react";
+import { useAuthStore } from "./lib/auth-store";
 
 function Router() {
   return (
@@ -43,6 +45,13 @@ function Router() {
 }
 
 function App() {
+  const { checkAuthStatus } = useAuthStore();
+
+  // Check authentication status when the app mounts
+  useEffect(() => {
+    checkAuthStatus();
+  }, [checkAuthStatus]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

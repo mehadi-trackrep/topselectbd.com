@@ -1,11 +1,11 @@
-import { Heart, ShoppingCart, Eye, Check } from "lucide-react";
+import { Heart, ShoppingCart, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/shared/schema";
 import { useCartStore } from "@/lib/cart-store";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useWishlistStore } from "@/hooks/use-wishlist";
 import { useQuickViewStore } from "@/hooks/use-quick-view";
 

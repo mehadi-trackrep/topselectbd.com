@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Lock, Check, Minus, Plus } from "lucide-react";
+import { X, Lock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
