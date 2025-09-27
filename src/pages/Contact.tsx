@@ -205,16 +205,16 @@ export default function Contact() {
         {/* Map Section */}
         <div className="mt-20 bg-card p-8 rounded-xl shadow-lg">
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Find Us</h2>
-          <div className="w-full h-96 rounded-lg overflow-hidden">
-            <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7300.87413842196!2d90.390548610675645!3d23.767799044609184!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8a4a82e5b75%3A0x3e0a2a2e2f5e4e0!2sDhaka!5e0!3m2!1sen!2sbd!4v1718923456789" 
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen={true} 
-              loading="lazy" 
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Location Map"
+          <div className="w-full h-96 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+             <iframe                                                                                                 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7300.87413842196!2d90.390548610675645!3d23.767799044609184!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8a4a82e5b75%3A0x3e0a2a2e2f5e4e0!2sDhaka!5e0!3m2!1sen!2sbd!4v1718923456789"
+                width="100%"                                                                                          
+                height="100%"                                                                                         
+                style={{ border: 0 }}                                                                                 
+                allowFullScreen={true}                                                                                
+                loading="lazy"                                                                                        
+                referrerPolicy="no-referrer-when-downgrade"                                                           
+                title="Location Map"                                                                                  
             />
           </div>
         </div>
